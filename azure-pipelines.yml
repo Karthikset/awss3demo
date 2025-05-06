@@ -3,32 +3,11 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-            checkout scm
-            }
-        }
-        
-        stage ("terraform init") {
-            steps {
-                sh ('terraform init -reconfigure') 
-            }
-        }
-        stage ("terraform plan") {
-            steps {
-                sh ('terraform plan') 
-            }
-        }
-                
-        stage ("terraform Action") {
-            steps {
-                echo "Terraform action is --> ${action}"
-                sh ('terraform ${action} --auto-approve') 
-           }
-        }
-    }
-}
+- task: S3Upload@1
+  inputs:
+    awsCredentials: 'aws-service'
+    regionName: 'us-west-2'
+    bucketName: 'newbucket'
+    globExpressions: '**'
+    filesAcl: 'public-read'
+    createBucket: true
